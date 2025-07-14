@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mesin Rekomendasi Anime</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+
+    <style>
+        body { background-color: #f8f9fa; }
+
+        .swiper-slide .card {
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
+        }
+        .swiper-slide .card-body {
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+        }
+        .swiper-slide .card-text {
+            margin-top: auto; 
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h1 class="card-title text-center mb-4">🔮 Istana Rekomendasi Anime 🔮</h1>
+                        
+                        <form method="post" class="mb-4">
+                            <div class="mb-3">
+                                <label for="anime_name" class="form-label">Masukkan Judul Anime atau Pilih dari Daftar:</label>
+                                <input type="text" class="form-control form-control-lg" id="anime_name" name="anime_name" list="anime-list" placeholder="Contoh: Cowboy Bebop" required>
+                                <datalist id="anime-list">
+                                    {% for title in anime_list %}
+                                    <option value="{{ title }}">
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Dapatkan Rekomendasi</button>
+                            </div>
+                        </form>
+
+                        {% if recommendations %}
+                        <hr class="my-4">
+                        <h3 class="mt-4">Hasil Rekomendasi untuk "{{ anime }}":</h3>
+                        <div class="swiper">
+                          <div class="swiper-wrapper py-4">
+                            {% for title, rating in recommendations %}
+                            <div class="swiper-slide">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title">{{ title }}</h6>
+                                        <p class="card-text">
+                                            <span class="badge bg-primary rounded-pill">Rating: {{ rating }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                          </div>
+                          <div class="swiper-button-prev"></div>
+                          <div class="swiper-button-next"></div>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mt-5">
+                    <div class="card-body p-4">
+                        <h2 class="card-title text-center mb-4">📚 The Grand Library 📚</h2>
+                        <p class="text-center text-muted">Jelajahi semua anime yang ada di dataset!</p>
+                        <table id="anime-gallery">
+                            <thead>
+                                <tr>
+                                    <th>Judul Anime</th>
+                                    <th>Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for title, rating in gallery_list %}
+                                <tr>
+                                    <td>{{ title }}</td>
+                                    <td>{{ rating }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+
+    <script>
+        const swiper = new Swiper('.swiper', {
+            loop: false, slidesPerView: 2, spaceBetween: 20,
+            breakpoints: { 768: { slidesPerView: 4, spaceBetween: 30 } },
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        });
+
+        const dataTable = new simpleDatatables.DataTable("#anime-gallery", {
+            perPage: 10, perPageSelect: [10, 25, 50, 100], searchable: true, sortable: true,
+            labels: {
+                placeholder: "Cari anime...", perPage: "{select} judul per halaman",
+                noRows: "Tidak ada anime yang ditemukan", info: "Menampilkan {start} sampai {end} dari {rows} judul",
+            }
+        });
+    </script>
+</body>
+</html>
